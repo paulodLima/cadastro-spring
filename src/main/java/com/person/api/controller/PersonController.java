@@ -6,7 +6,9 @@ import com.person.api.dto.PersonResponseDTO;
 import com.person.api.model.PersonEntity;
 import com.person.api.service.OperatorService;
 import com.person.api.service.PersonService;
-
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.TransactionScoped;
@@ -28,12 +30,14 @@ public class PersonController {
     }
 
    @PostMapping("persons")
+   @PreAuthorize("hasRole('GESTOR')")
     public PersonResponseDTO insert(@RequestBody @Valid PersonRequestDTO personRequestDTO) {
 
         return personService.createPerson(personRequestDTO);
     }
 
     @GetMapping("persons")
+    @PreAuthorize("hasRole('GESTOR')")
     public List<PersonResponseDTO> listPerson() {
         return personService.getPersons();
     }
@@ -44,36 +48,44 @@ public class PersonController {
     }
 
     @PutMapping("persons/{documentNumber}")
+    @PreAuthorize("hasRole('GESTOR')")
     public PersonEntity updatePerson(@PathVariable String documentNumber, @Valid @RequestBody PersonResponseDTO personResponseDTO){
         return personService.update(documentNumber,personResponseDTO);
     }
     @TransactionScoped
     @DeleteMapping("persons/{documentNumber}")
+    @PreAuthorize("hasRole('GESTOR')")
     public void delete(@PathVariable String documentNumber){
          personService.delete(documentNumber);
     }
 
     @PostMapping("admin/operator")
+    @PreAuthorize("hasRole('ADMIN')")
     public OperatorRequestDTO insert(@RequestBody @Valid OperatorRequestDTO operatorRequestDTO){
        return operatorService.insertOperator(operatorRequestDTO);
     }
 
     @DeleteMapping("admin/operator/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteOperator(@PathVariable Long id){
         operatorService.remove(id);
     }
 
     @GetMapping("operator")
-    public List<OperatorRequestDTO> listAllOperator(){
+    @PreAuthorize("hasRole('GESTOR')")
+    public List<OperatorRequestDTO> listAllOperator(@AuthenticationPrincipal UserDetails userDetails){
+        System.out.println(userDetails);
         return operatorService.findAll();
     }
 
     @GetMapping("operator/{id}")
+    @PreAuthorize("hasRole('GESTOR')")
     public OperatorRequestDTO getOperator(@PathVariable Long id){
         return operatorService.getOperator(id);
     }
 
     @PutMapping("admin/operator/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public OperatorRequestDTO updateOperator(@PathVariable Long id,@Valid @RequestBody OperatorRequestDTO operatorRequestDTO){
         return operatorService.updateOperator(id,operatorRequestDTO);
     }

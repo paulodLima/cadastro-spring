@@ -5,6 +5,7 @@ import com.person.api.mapper.OperatorMapper;
 import com.person.api.model.OperatorEntity;
 import com.person.api.repository.OperatorRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,9 +57,9 @@ public class OperatorService {
     }
 
     public OperatorRequestDTO encoderPassword(OperatorRequestDTO operatorRequestDTO){
-   /*     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        operatorRequestDTO.setPassword(passwordEncoder.encode(operatorRequestDTO.getPassword()));*/
+        operatorRequestDTO.setPassword(passwordEncoder.encode(operatorRequestDTO.getPassword()));
 
         return operatorRequestDTO;
     }

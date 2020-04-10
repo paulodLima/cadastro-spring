@@ -1,4 +1,3 @@
-/*
 package com.person.api.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,4 +9,3 @@ public class PasswordEncoderTest {
               System.out.println(passwordEncoder.encode("123"));
     }
 }
-*/
