@@ -1,6 +1,7 @@
 package com.person.api.service;
 
 import com.person.api.dto.OperatorRequestDTO;
+import com.person.api.exception.MessageErrorImpl;
 import com.person.api.mapper.OperatorMapper;
 import com.person.api.model.OperatorEntity;
 import com.person.api.repository.OperatorRepository;
@@ -8,8 +9,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.person.api.util.MessagesUtil.getMessage;
 
 @Service
 public class OperatorService {
@@ -38,14 +42,14 @@ public class OperatorService {
         return repository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
-    public OperatorRequestDTO getOperator(Long idOperator) {
+    public OperatorRequestDTO getOperator(String login) {
 
-        return mapper.toResponse(repository.findById(idOperator).orElse(null));
+        return mapper.toResponse(repository.findOperatorName(login).orElseThrow(() -> new EntityNotFoundException(getMessage(MessageErrorImpl.RESOURCE_NOT_FOUND, getMessage(MessageErrorImpl.OPERATOR)))));
     }
 
-    public void remove(Long idOperator) {
+    public void remove(String login) {
 
-        repository.deleteById(idOperator);
+        repository.deleteByLogin(login);
     }
 
     public OperatorRequestDTO updateOperator(Long id, OperatorRequestDTO operator) {

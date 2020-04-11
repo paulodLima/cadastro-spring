@@ -18,7 +18,6 @@ public class OperatorRequestDTO {
     @NotBlank
     private String perfil;
 
-    @JsonIgnore
     private boolean admin;
 
     public String getName() {

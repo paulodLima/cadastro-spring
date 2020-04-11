@@ -1,21 +1,13 @@
 package com.person.api.dto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
 public class PhoneRequestDTO {
 
-    @NotBlank
-    @Valid
     private String number;
 
     private Long codArea;
 
-    @NotBlank
-    @Valid
     private String phoneType;
 
-    @NotBlank
     private String operatorLogin;
 
     public String getNumber() {
@@ -49,4 +41,5 @@ public class PhoneRequestDTO {
     public void setOperatorLogin(String operatorLogin) {
         this.operatorLogin = operatorLogin;
     }
+
 }

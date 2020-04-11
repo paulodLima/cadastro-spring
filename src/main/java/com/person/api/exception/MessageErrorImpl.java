@@ -7,6 +7,7 @@ public enum MessageErrorImpl implements MessageError{
     OBJECT_TO_JSON_FAIL(3),
     SERVICE_UNAVAILABLE(4),
     PERSON(5),
+    OPERATOR(7),
     RESOURCE_NOT_FOUND(6),
     ADDRESS(7);
 

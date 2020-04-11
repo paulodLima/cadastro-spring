@@ -3,41 +3,47 @@ package com.person.api.controller;
 import com.person.api.dto.OperatorRequestDTO;
 import com.person.api.dto.PersonRequestDTO;
 import com.person.api.dto.PersonResponseDTO;
+import com.person.api.dto.PhoneRequestDTO;
 import com.person.api.model.PersonEntity;
 import com.person.api.service.OperatorService;
 import com.person.api.service.PersonService;
-import org.springframework.security.access.prepost.PreAuthorize;
+import com.person.api.service.PhoneService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.TransactionScoped;
 import javax.validation.Valid;
+import javax.xml.stream.events.StartElement;
 import java.util.List;
 
 @RestController
 @RequestMapping("/v1/")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:4200")
 public class PersonController {
 
     private final PersonService personService;
     private final OperatorService operatorService;
+    private final PhoneService phoneService;
 
 
-    public PersonController(PersonService personService,OperatorService operatorService ) {
+    public PersonController(PersonService personService, OperatorService operatorService, PhoneService phoneService) {
         this.personService = personService;
         this.operatorService = operatorService;
+        this.phoneService = phoneService;
     }
 
-   @PostMapping("persons")
-   @PreAuthorize("hasRole('GESTOR')")
+    @GetMapping("login")
+    public String login(){
+        return "autentiaco com sucesso";
+    }
+   @PostMapping("gestor/persons")
     public PersonResponseDTO insert(@RequestBody @Valid PersonRequestDTO personRequestDTO) {
 
         return personService.createPerson(personRequestDTO);
     }
 
     @GetMapping("persons")
-    @PreAuthorize("hasRole('GESTOR')")
     public List<PersonResponseDTO> listPerson() {
         return personService.getPersons();
     }
@@ -47,48 +53,46 @@ public class PersonController {
         return  personService.getPerson(documentNumber);
     }
 
-    @PutMapping("persons/{documentNumber}")
-    @PreAuthorize("hasRole('GESTOR')")
+    @PutMapping("gestor/persons/{documentNumber}")
     public PersonEntity updatePerson(@PathVariable String documentNumber, @Valid @RequestBody PersonResponseDTO personResponseDTO){
         return personService.update(documentNumber,personResponseDTO);
     }
     @TransactionScoped
-    @DeleteMapping("persons/{documentNumber}")
-    @PreAuthorize("hasRole('GESTOR')")
+    @DeleteMapping("gestor/persons/{documentNumber}")
     public void delete(@PathVariable String documentNumber){
          personService.delete(documentNumber);
     }
 
     @PostMapping("admin/operator")
-    @PreAuthorize("hasRole('ADMIN')")
     public OperatorRequestDTO insert(@RequestBody @Valid OperatorRequestDTO operatorRequestDTO){
        return operatorService.insertOperator(operatorRequestDTO);
     }
 
+    @TransactionScoped
     @DeleteMapping("admin/operator/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void deleteOperator(@PathVariable Long id){
-        operatorService.remove(id);
+    public void deleteOperator(@PathVariable String login){
+        operatorService.remove(login);
     }
 
-    @GetMapping("operator")
-    @PreAuthorize("hasRole('GESTOR')")
+    @GetMapping("gestor/operator")
     public List<OperatorRequestDTO> listAllOperator(@AuthenticationPrincipal UserDetails userDetails){
         System.out.println(userDetails);
         return operatorService.findAll();
     }
 
-    @GetMapping("operator/{id}")
-    @PreAuthorize("hasRole('GESTOR')")
-    public OperatorRequestDTO getOperator(@PathVariable Long id){
+    @GetMapping("gestor/operator/{id}")
+    public OperatorRequestDTO getOperator(@PathVariable String id){
         return operatorService.getOperator(id);
     }
 
     @PutMapping("admin/operator/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public OperatorRequestDTO updateOperator(@PathVariable Long id,@Valid @RequestBody OperatorRequestDTO operatorRequestDTO){
         return operatorService.updateOperator(id,operatorRequestDTO);
     }
 
+    @PostMapping("/telefone")
+    public PhoneRequestDTO cadastarTelefone(@RequestBody @Valid PhoneRequestDTO phoneRequestDTO, PersonEntity personEntity){
+        return this.phoneService.processPhone(phoneRequestDTO,personEntity);
+    }
 }
 

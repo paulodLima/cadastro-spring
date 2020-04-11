@@ -62,6 +62,10 @@ public class PersonService {
     }
 
     public void delete(String documentNumber){
+        PersonEntity personEntity = personRepository.findByCpf(documentNumber).orElse(null);
+
+        phoneService.deleteTelephone(personEntity.getId());
+
        personRepository.deleteByCpf(documentNumber);
     }
 }

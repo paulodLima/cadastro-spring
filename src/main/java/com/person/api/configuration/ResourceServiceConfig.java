@@ -14,10 +14,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+class SecurityConfig extends WebSecurityConfigurerAdapter {
 
    @Autowired
    CustomUserDatailService customUserDatailService;
@@ -34,11 +35,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(customUserDatailService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
+
+
+
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/*/operator/**").hasRole("GESTOR")
-                .antMatchers("/*/admin/**").hasRole("ADMIN")
+                .antMatchers("/*/admin/**").permitAll()
+                .antMatchers("/*/gestor/**").permitAll()
+                .antMatchers("/*/persons/**").permitAll()
                 .anyRequest().authenticated()
+                .and().cors()
                 .and()
                 .httpBasic()
                 .and()
